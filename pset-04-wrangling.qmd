@@ -151,9 +151,11 @@ regions <- regions |>
     .default = region_name  #avoid non-matching values become NA
     )
   ) |>
-  rename(state_name = states)
+  rename(state_name = states) |>
+  filter(state_name %in% c(state.name, "District of Columbia", "Puerto Rico"))
   
-# view(regions)
+  
+# view(regions) # intitally have 59 rows, filter out to match Census (added to the last step above)
 ```
 
 9. Add a region and region name columns to the `population` data frame.
@@ -161,7 +163,7 @@ regions <- regions |>
 ```{r}
 population$state_name <- as.character(population$state_name)  # convert to character from list, previously the right join returned an error
 population <- right_join(regions, population, by = "state_name") 
-view(population)
+# view(population)
 ```
 
 
@@ -287,7 +289,7 @@ death <- deaths_raw |>
 
 15. Using the `deaths` dataset you created, make a bar plot showing the total COVID-19 deaths by state. Show only the top 10 states with the highest death counts. Order the bars from highest to lowest and use appropriate labels and title.
 
-```{r}
+```{r, fig.height=8, fig.width=12}
 death |>
   group_by(state) |>
   summarise(
